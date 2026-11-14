@@ -18,50 +18,8 @@ const std::size_t kMaxSystemdUnitCount{100'000U};
 
 } // namespace
 
-Status ListUnitsMethodHandler::parseReply(
-    Output& output, const UniqueDbusMessage& reply) const {
-  output = {};
-
-  DBusMessageIter message_it{};
-  if (!dbus_message_iter_init(reply.get(), &message_it)) {
-    return Status::failure("Failed to initialize the field iterator");
-  }
-
-  if (dbus_message_iter_get_arg_type(&message_it) != DBUS_TYPE_ARRAY) {
-    return Status::failure(
-        "The method reply is encoded in an unexpected format");
-  }
-
-  DBusMessageIter array_it{};
-  dbus_message_iter_recurse(&message_it, &array_it);
-
-  std::size_t count{0U};
-  while (dbus_message_iter_get_arg_type(&array_it) != DBUS_TYPE_INVALID) {
-    if (count == kMaxSystemdUnitCount) {
-      LOG(WARNING) << "Unable to process all systemd units from ListUnits; "
-                      "reached limit of "
-                   << kMaxSystemdUnitCount;
-      break;
-    }
-
-    Unit unit = {};
-    auto status = readUnitInformation(unit, array_it);
-    if (!status.ok()) {
-      return status;
-    }
-
-    output.push_back(std::move(unit));
-    ++count;
-    if (!dbus_message_iter_next(&array_it)) {
-      break;
-    }
-  }
-
-  return Status::success();
-}
-
-Status ListUnitsMethodHandler::readUnitInformation(Unit& unit,
-                                                   DBusMessageIter& it) const {
+Status readListUnitInformation(ListUnitsMethodHandler::Unit& unit,
+                               DBusMessageIter& it) {
   unit = {};
 
   if (dbus_message_iter_get_arg_type(&it) != DBUS_TYPE_STRUCT) {
@@ -88,6 +46,55 @@ Status ListUnitsMethodHandler::readUnitInformation(Unit& unit,
   }
 
   return Status::success();
+}
+
+Status parseListUnitsReply(ListUnitsMethodHandler::Output& output,
+                           DBusMessageIter& array_it) {
+  output = {};
+
+  std::size_t count{0U};
+  while (dbus_message_iter_get_arg_type(&array_it) != DBUS_TYPE_INVALID) {
+    if (count == kMaxSystemdUnitCount) {
+      LOG(WARNING) << "Unable to process all systemd units from ListUnits; "
+                      "reached limit of "
+                   << kMaxSystemdUnitCount;
+      break;
+    }
+
+    ListUnitsMethodHandler::Unit unit = {};
+    auto status = readListUnitInformation(unit, array_it);
+    if (!status.ok()) {
+      return status;
+    }
+
+    output.push_back(std::move(unit));
+    ++count;
+    if (!dbus_message_iter_next(&array_it)) {
+      break;
+    }
+  }
+
+  return Status::success();
+}
+
+Status ListUnitsMethodHandler::parseReply(
+    Output& output, const UniqueDbusMessage& reply) const {
+  output = {};
+
+  DBusMessageIter message_it{};
+  if (!dbus_message_iter_init(reply.get(), &message_it)) {
+    return Status::failure("Failed to initialize the field iterator");
+  }
+
+  if (dbus_message_iter_get_arg_type(&message_it) != DBUS_TYPE_ARRAY) {
+    return Status::failure(
+        "The method reply is encoded in an unexpected format");
+  }
+
+  DBusMessageIter array_it{};
+  dbus_message_iter_recurse(&message_it, &array_it);
+
+  return parseListUnitsReply(output, array_it);
 }
 
 } // namespace osquery

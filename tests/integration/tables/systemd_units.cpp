@@ -29,6 +29,7 @@ TEST_F(SystemdUnitsTest, test_sanity) {
 
   ValidationMap row_map = {
       {"id", NormalType},
+      {"type", NormalType},
       {"description", NormalType},
       {"load_state", NormalType},
       {"active_state", NormalType},
@@ -45,6 +46,20 @@ TEST_F(SystemdUnitsTest, test_sanity) {
   };
 
   validate_rows(data, row_map);
+}
+
+TEST_F(SystemdUnitsTest, test_filter_by_type) {
+  auto const all_rows = execute_query("select * from systemd_units");
+  if (all_rows.empty()) {
+    GTEST_SKIP() << "No systemd units available on this host";
+  }
+
+  auto const service_rows =
+      execute_query("select * from systemd_units where type = 'service'");
+
+  for (const auto& row : service_rows) {
+    EXPECT_EQ(row.at("type"), "service");
+  }
 }
 
 } // namespace table_tests

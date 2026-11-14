@@ -17,6 +17,7 @@ nav:
   - osqueryi (shell): introduction/using-osqueryi.md
   - osqueryd (daemon): introduction/using-osqueryd.md
   - SQL Introduction: introduction/sql.md
+  - systemd units: introduction/systemd-units.md
 - Installation:
   - Install on MacOS: installation/install-macos.md
   - Install on Linux: installation/install-linux.md

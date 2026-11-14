@@ -2,6 +2,7 @@ table_name("systemd_units")
 description("Track systemd units.")
 schema([
     Column("id", TEXT, "Unique unit identifier"),
+    Column("type", TEXT, "The unit type, derived from the suffix of the unit id (e.g. `service`, `socket`, `timer`)"),
     Column("description", TEXT, "Unit description"),
     Column("load_state", TEXT, "Reflects whether the unit definition was properly loaded"),
     Column("active_state", TEXT, "The high-level unit activation state, i.e. generalization of SUB"),

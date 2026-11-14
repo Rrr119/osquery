@@ -11,10 +11,21 @@
 #include <osquery/sql/dynamic_table_row.h>
 #include <osquery/tables/system/linux/dbus/methods/getstringproperty.h>
 #include <osquery/tables/system/linux/dbus/methods/listunitsmethodhandler.h>
+#include <osquery/tables/system/linux/systemd_units.h>
 
 namespace osquery {
 
 namespace tables {
+
+std::string getUnitType(const std::string& id) {
+  const auto separator_position = id.rfind('.');
+  if (separator_position == std::string::npos ||
+      separator_position + 1U >= id.size()) {
+    return {};
+  }
+
+  return id.substr(separator_position + 1U);
+}
 
 namespace {
 struct PropertyQueryDesc final {
@@ -32,6 +43,8 @@ const std::vector<PropertyQueryDesc> kStringPropertyQueryList = {
 } // namespace
 
 TableRows genSystemdUnits(QueryContext& context) {
+  const auto requested_types = context.constraints["type"].getAll(EQUALS);
+
   UniqueDbusConnection connection;
   auto status = UniqueDbusConnection::create(connection, true);
   if (!status.ok()) {
@@ -54,9 +67,17 @@ TableRows genSystemdUnits(QueryContext& context) {
   TableRows results;
 
   for (const auto& unit : unit_list) {
+    const auto unit_type = getUnitType(unit.id);
+
+    if (!requested_types.empty() &&
+        requested_types.count(unit_type) == 0U) {
+      continue;
+    }
+
     auto row = make_table_row();
 
     row["id"] = SQL_TEXT(unit.id);
+    row["type"] = SQL_TEXT(unit_type);
     row["description"] = SQL_TEXT(unit.description);
     row["load_state"] = SQL_TEXT(unit.load_state);
     row["active_state"] = SQL_TEXT(unit.active_state);

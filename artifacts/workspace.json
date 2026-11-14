@@ -1,0 +1,17 @@
+{
+  "root": "/home/dev/feedback/uid17942",
+  "B": "/home/dev/feedback/uid17942",
+  "sha": "1b34ff7fa3febd46d026db51a5225defa27a4005",
+  "wslDistro": "Ubuntu-26.04",
+  "source": {
+    "owner": "osquery",
+    "repo": "osquery",
+    "sha": "1b34ff7fa3febd46d026db51a5225defa27a4005"
+  },
+  "fork": {
+    "owner": "Rrr119",
+    "repo": "osquery",
+    "cloneUrl": "https://github.com/Rrr119/osquery.git"
+  },
+  "at": "2026-11-14T13:12:25.622Z"
+}

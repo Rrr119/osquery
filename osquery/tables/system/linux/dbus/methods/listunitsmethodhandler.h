@@ -10,6 +10,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <osquery/tables/system/linux/dbus/methods/dbusmethod.h>
 #include <osquery/utils/status/status.h>
@@ -43,10 +44,18 @@ class ListUnitsMethodHandler {
  protected:
   ListUnitsMethodHandler() = default;
   virtual ~ListUnitsMethodHandler() = default;
-
-  Status readUnitInformation(Unit& unit, DBusMessageIter& it) const;
 };
 
 using ListUnitsMethod = DbusMethod<ListUnitsMethodHandler>;
+
+// Parses the body of a ListUnits reply, given an iterator positioned on the
+// outer array of unit structs. Exposed for testing.
+Status parseListUnitsReply(
+    ListUnitsMethodHandler::Output& output, DBusMessageIter& array_it);
+
+// Reads a single (ssssssouso) unit struct from the given iterator.
+// Exposed for testing.
+Status readListUnitInformation(ListUnitsMethodHandler::Unit& unit,
+                               DBusMessageIter& it);
 
 } // namespace osquery
