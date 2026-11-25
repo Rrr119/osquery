@@ -1,0 +1,36 @@
+table_name("container_runtime_info", aliases=["container_runtime", "container_runtimes", "container_runtimes_info", "runtime_info"])
+description("Information about detected container runtimes.")
+schema([
+    Column("runtime", TEXT, "Canonical runtime name", index=True, collate="nocase"),
+    Column("runtime_type", TEXT, "Alias for the canonical runtime name", collate="nocase"),
+    Column("runtime_name", TEXT, "Canonical runtime name", collate="nocase"),
+    Column("name", TEXT, "Display runtime name", collate="nocase"),
+    Column("display_name", TEXT, "Human-readable runtime name", collate="nocase"),
+    Column("version", TEXT, "Runtime version", collate="version"),
+    Column("runtime_version", TEXT, "Runtime service version", collate="version"),
+    Column("api_version", TEXT, "Runtime API version", collate="version"),
+    Column("min_api_version", TEXT, "Minimum supported API version", collate="version"),
+    Column("spec_version", TEXT, "Runtime API specification version"),
+    Column("git_commit", TEXT, "Runtime build commit"),
+    Column("go_version", TEXT, "Go toolchain version", collate="version"),
+    Column("os", TEXT, "Runtime operating system"),
+    Column("arch", TEXT, "Runtime architecture"),
+    Column("kernel_version", TEXT, "Runtime kernel version", collate="version"),
+    Column("oci_runtime", TEXT, "Default OCI runtime"),
+    Column("storage_driver", TEXT, "Image storage driver"),
+    Column("cgroup_driver", TEXT, "cgroup driver/manager"),
+    Column("storage_root", TEXT, "Persistent storage root"),
+    Column("root_dir", TEXT, "Alias for storage_root"),
+    Column("id", TEXT, "Runtime/engine identifier", collate="nocase"),
+    Column("hostname", TEXT, "Runtime host name"),
+    Column("endpoint", TEXT, "API endpoint or socket path"),
+    Column("socket_path", TEXT, "Runtime socket path"),
+    Column("socket", TEXT, "Alias for socket_path"),
+    Column("status", TEXT, "Runtime status"),
+    Column("running", INTEGER, "1 if the runtime API responded, 0 otherwise")
+])
+implementation("applications/container_runtime@genContainerRuntimeInfo")
+examples([
+  "select runtime, version, storage_driver from container_runtime_info",
+  "select * from container_runtime_info where runtime = 'docker'"
+])

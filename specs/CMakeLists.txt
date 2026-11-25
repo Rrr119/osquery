@@ -218,6 +218,8 @@ function(generateNativeTables)
     "posix/augeas.table:linux,macos"
     "posix/authorized_keys.table:linux,macos"
     "posix/block_devices.table:linux,macos"
+    "posix/container_image_layers.table:linux,macos"
+    "posix/container_runtime_info.table:linux,macos"
     "posix/cpu_time.table:linux,macos"
     "posix/crontab.table:linux,macos"
     "posix/disk_encryption.table:linux,macos"

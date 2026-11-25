@@ -101,6 +101,8 @@ function(generateTestsIntegrationTablesTestsTest)
       augeas.cpp
       authorized_keys.cpp
       block_devices.cpp
+    container_image_layers.cpp
+    container_runtime_info.cpp
       cpu_time.cpp
       crontab.cpp
       disk_encryption.cpp

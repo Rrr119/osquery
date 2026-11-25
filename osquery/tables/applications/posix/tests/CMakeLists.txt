@@ -8,6 +8,7 @@
 function(osqueryTablesApplicationsPosixTestsMain)
   if(DEFINED PLATFORM_POSIX)
     generateOsqueryTablesApplicationsPosixTestsPrometheusmetricstestsTest()
+    generateOsqueryTablesApplicationsPosixTestsContainerruntimetestsTest()
   endif()
 endfunction()
 
@@ -22,6 +23,20 @@ function(generateOsqueryTablesApplicationsPosixTestsPrometheusmetricstestsTest)
     osquery_registry
     osquery_tables_applications
     tests_helper
+    thirdparty_googletest
+  )
+endfunction()
+
+function(generateOsqueryTablesApplicationsPosixTestsContainerruntimetestsTest)
+  add_osquery_executable(
+    osquery_tables_applications_posix_tests_containerruntimetests-test
+    container_runtime_tests.cpp
+  )
+
+  target_link_libraries(
+    osquery_tables_applications_posix_tests_containerruntimetests-test PRIVATE
+    osquery_cxx_settings
+    osquery_tables_applications
     thirdparty_googletest
   )
 endfunction()

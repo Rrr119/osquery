@@ -1,0 +1,27 @@
+table_name("container_image_layers", aliases=["container_image_layer", "container_image_layer_info", "container_runtime_image_layers", "image_layers", "image_layer", "image_layer_info"])
+description("Image layer information normalized across container runtimes.")
+schema([
+    Column("runtime", TEXT, "Canonical runtime name", index=True, collate="nocase"),
+    Column("runtime_type", TEXT, "Alias for the canonical runtime name", collate="nocase"),
+    Column("runtime_name", TEXT, "Canonical runtime name", index=True, collate="nocase"),
+    Column("id", TEXT, "Image ID without algorithm prefix", index=True, collate="nocase"),
+    Column("image_id", TEXT, "Image ID without algorithm prefix", collate="nocase"),
+    Column("image", TEXT, "One image reference or tag", collate="nocase"),
+    Column("image_name", TEXT, "Alias for image", collate="nocase"),
+    Column("tags", TEXT, "Comma-separated image references/tags"),
+    Column("layer_order", INTEGER, "Layer order (1 = base layer)"),
+    Column("layer_id", TEXT, "Layer/diff ID without algorithm prefix", collate="nocase"),
+    Column("digest", TEXT, "Layer digest or diff ID"),
+    Column("layer_digest", TEXT, "Alias for digest"),
+    Column("diff_id", TEXT, "Uncompressed rootfs diff ID"),
+    Column("chain_id", TEXT, "Runtime storage chain ID, when available", collate="nocase"),
+    Column("size_bytes", BIGINT, "Layer size in bytes, when reported"),
+    Column("size", BIGINT, "Alias for size_bytes"),
+    Column("media_type", TEXT, "Layer media type, when reported")
+])
+implementation("applications/container_runtime@genContainerImageLayers")
+examples([
+  "select runtime, id, layer_order, layer_id from container_image_layers",
+  "select * from container_image_layers where runtime = 'podman'",
+  "select * from container_image_layers where id = '6a2f32de169d'"
+])

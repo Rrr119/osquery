@@ -30,6 +30,7 @@ function(generateOsqueryTablesApplications)
   if(DEFINED PLATFORM_POSIX)
     list(APPEND source_files
       posix/carbon_black.cpp
+      posix/container_runtime.cpp
       posix/docker.cpp
       posix/prometheus_metrics.cpp
     )
@@ -85,6 +86,7 @@ function(generateOsqueryTablesApplications)
 
   if(DEFINED PLATFORM_POSIX)
     list(APPEND public_header_files
+      posix/container_runtime.h
       posix/prometheus_metrics.h
     )
 
@@ -97,6 +99,7 @@ function(generateOsqueryTablesApplications)
 
   if(DEFINED PLATFORM_POSIX)
     add_test(NAME osquery_tables_applications_posix_tests_prometheusmetricstests-test COMMAND osquery_tables_applications_posix_tests_prometheusmetricstests-test)
+    add_test(NAME osquery_tables_applications_posix_tests_containerruntimetests-test COMMAND osquery_tables_applications_posix_tests_containerruntimetests-test)
   endif()
 endfunction()
 
